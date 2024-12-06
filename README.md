@@ -36,3 +36,4 @@ Refer to [Psych Engine's build instructions](https://github.com/ShadowMario/FNF-
 - [Ezhalt](https://x.com/_ezhaltd) - Pessy's Easter Egg Jingle.
 - [MaliciousBunny](https://x.com/BunnyMalicious) - Video for the Final Update.
 - [DetectiveBaldi](https://github.com/DetectiveBaldi) - Compatibility for Flixel 5.8.0.
+- [LarryFrost](https://github.com/LarryFrosty) - Lua Cleanup PR.

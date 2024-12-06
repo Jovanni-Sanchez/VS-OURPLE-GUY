@@ -38,4 +38,4 @@ Refer to [Psych Engine's build instructions](https://github.com/ShadowMario/FNF-
 - [DetectiveBaldi](https://github.com/DetectiveBaldi) - Compatibility for Flixel 5.8.0.
 - [LarryFrost](https://github.com/LarryFrosty) - Lua Cleanup PR.
 - [ADA-Funni](https://github.com/ADA-Funni) - Mouse wheel shortcut for sustains within the Chart Editor.
-- [inky03](https://github.com/inky03) - Vortex Editor Functionality, a Everything Waveform view, and Editor sustains.
+- [inky03](https://github.com/inky03) - Vortex Editor Functionality, a Everything Waveform view, Editor sustains, and scripting touch-ups.

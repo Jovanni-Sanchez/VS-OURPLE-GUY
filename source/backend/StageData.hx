@@ -23,6 +23,8 @@ typedef StageFile = {
 
 	@:optional var preload:Dynamic;
 	@:optional var objects:Array<Dynamic>;
+	@default(["intro3", "intro2", "intro1", "introGo"])
+	var introSounds:Array<String>;
 	@:optional var _editorMeta:Dynamic;
 }
 
@@ -50,7 +52,7 @@ class StageData {
 			camera_opponent: [0, 0],
 			camera_girlfriend: [0, 0],
 			camera_speed: 1,
-
+			introSounds: ["intro3", "intro2", "intro1", "introGo"],
 			_editorMeta: {
 				gf: "gf",
 				dad: "dad",

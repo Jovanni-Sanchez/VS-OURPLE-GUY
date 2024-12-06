@@ -213,6 +213,8 @@ class FunkinLua {
 		set('shadersEnabled', ClientPrefs.data.shaders);
 		set('scriptName', scriptName);
 		set('currentModDirectory', Mods.currentModDirectory);
+		set('primaryModifier', Main.modifier_keys[0]); // Control or Command
+		set('secondaryModifier', Main.modifier_keys[1]); // Alt or Option
 
 		// Noteskin/Splash
 		set('noteSkin', ClientPrefs.data.noteSkin);

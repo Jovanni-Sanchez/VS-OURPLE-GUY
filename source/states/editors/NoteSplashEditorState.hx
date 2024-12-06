@@ -514,7 +514,7 @@ class NoteSplashEditorState extends MusicBeatState {
 			}
 
 			var changedOffset = false;
-			if (FlxG.keys.pressed.CONTROL && config.animations.get(curAnim) != null) {
+			if (#if !mac FlxG.keys.pressed.CONTROL #else FlxG.keys.pressed.WINDOWS #end && config.animations.get(curAnim) != null) {
 				if (FlxG.keys.justPressed.C) {
 					copiedOffset = config.animations.get(curAnim).offsets.copy();
 				} else if (FlxG.keys.justPressed.V) {

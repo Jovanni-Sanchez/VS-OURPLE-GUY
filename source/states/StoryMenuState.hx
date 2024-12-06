@@ -242,15 +242,16 @@ class StoryMenuState extends MusicBeatState {
 			else if (changeDiff)
 				changeDifficulty();
 
-			if (FlxG.keys.justPressed.CONTROL) {
+			#if !mac FlxG.keys.pressed.CONTROL #else FlxG.keys.pressed.WINDOWS #end {
 				persistentUpdate = false;
 				openSubState(new GameplayChangersSubstate());
-			} else if (controls.RESET) {
-				persistentUpdate = false;
-				openSubState(new ResetScoreSubState('', curDifficulty, '', curWeek));
-				// FlxG.sound.play(Paths.sound('scrollMenu'));
-			} else if (controls.ACCEPT)
-				selectWeek();
+			}
+		else if (controls.RESET) {
+			persistentUpdate = false;
+			openSubState(new ResetScoreSubState('', curDifficulty, '', curWeek));
+			// FlxG.sound.play(Paths.sound('scrollMenu'));
+		} else if (controls.ACCEPT)
+			selectWeek();
 		}
 
 		if (controls.BACK && !movedBack && !selectedWeek) {

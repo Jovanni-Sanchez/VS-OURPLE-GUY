@@ -13,7 +13,7 @@ class InputFormatter {
 			case CONTROL:
 				return "Ctrl";
 			case ALT:
-				return "Alt";
+				return Main.modifier_keys[1];
 			case CAPSLOCK:
 				return "Caps";
 			case PAGEUP:
@@ -86,6 +86,10 @@ class InputFormatter {
 				return "]";
 			case QUOTE:
 				return "'";
+			#if mac
+			case WINDOWS:
+				return 'Command';
+			#end
 			case PRINTSCREEN:
 				return "PrtScrn";
 			case NONE:

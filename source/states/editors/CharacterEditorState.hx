@@ -169,10 +169,10 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			"R - Reset Camera Zoom",
 			"",
 			"CHARACTER",
-			"Ctrl + R - Reset Current Offset",
-			"Ctrl + C - Copy Current Offset",
-			"Ctrl + V - Paste Copied Offset on Current Animation",
-			"Ctrl + Z - Undo Last Paste or Reset",
+			"" + Main.modifier_keys[0] + " + R - Reset Current Offset",
+			"" + Main.modifier_keys[0] + " + C - Copy Current Offset",
+			"" + Main.modifier_keys[0] + " + V - Paste Copied Offset on Current Animation",
+			"" + Main.modifier_keys[0] + " + Z - Undo Last Paste or Reset",
 			"W/S - Previous/Next Animation",
 			"Space - Replay Animation",
 			"Arrow Keys/Mouse & Right Click - Move Offset",
@@ -181,7 +181,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			"OTHER",
 			"F12 - Toggle Silhouettes",
 			"Hold Shift - Move Offsets 10x faster and Camera 4x faster",
-			"Hold Control - Move camera 4x slower"
+			"Hold " + Main.modifier_keys[0] + " - Move camera 4x slower"
 		];
 
 		helpBg = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
@@ -313,7 +313,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 					spr.scale.set(character.scale.x, character.scale.y);
 					spr.updateHitbox();
 
-					spr.offset.set(character.offset.x, character.offset.y);
+					spr.offset.set(character.offset.x * spr.scale.x, character.offset.y * spr.scale.y);
 					spr.visible = true;
 
 					var otherSpr:FlxSprite = (spr == animateGhost) ? ghost : animateGhost;
@@ -711,6 +711,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 				character.jsonScale = sender.value;
 				character.scale.set(character.jsonScale, character.jsonScale);
 				character.updateHitbox();
+				character.playAnim(anims[curAnim].anim, true);
 				updatePointerPos(false);
 				unsavedProgress = true;
 			} else if (sender == positionXStepper) {
@@ -830,7 +831,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			shiftMult = 4;
 			shiftMultBig = 10;
 		}
-		if (FlxG.keys.pressed.CONTROL)
+		if (#if !mac FlxG.keys.pressed.CONTROL #else FlxG.keys.pressed.WINDOWS #end)
 			ctrlMult = 0.25;
 
 		// CAMERA CONTROLS
@@ -853,7 +854,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		}
 
 		var lastZoom = FlxG.camera.zoom;
-		if (FlxG.keys.justPressed.R && !FlxG.keys.pressed.CONTROL)
+		if (FlxG.keys.justPressed.R && !#if !mac FlxG.keys.pressed.CONTROL #else FlxG.keys.pressed.WINDOWS #end)
 			FlxG.camera.zoom = 1;
 		else if (FlxG.keys.pressed.E && FlxG.camera.zoom < 3) {
 			FlxG.camera.zoom += elapsed * FlxG.camera.zoom * shiftMult * ctrlMult;
@@ -923,7 +924,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			changedOffset = true;
 		}
 
-		if (FlxG.keys.pressed.CONTROL) {
+		if (#if !mac FlxG.keys.pressed.CONTROL #else FlxG.keys.pressed.WINDOWS #end) {
 			if (FlxG.keys.justPressed.C) {
 				copiedOffset[0] = character.offset.x;
 				copiedOffset[1] = character.offset.y;

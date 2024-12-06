@@ -1332,6 +1332,13 @@ class PlayState extends MusicBeatState {
 					for (evilNote in unspawnNotes) {
 						var matches:Bool = (noteColumn == evilNote.noteData && gottaHitNote == evilNote.mustPress && evilNote.noteType == noteType);
 						if (matches && Math.abs(spawnTime - evilNote.strumTime) == 0.0) {
+							if (evilNote.tail.length > 0) {
+								for (tail in evilNote.tail) {
+									tail.destroy();
+									unspawnNotes.remove(tail);
+								}
+							}
+
 							evilNote.destroy();
 							unspawnNotes.remove(evilNote);
 							ghostNotesCaught++;
@@ -1529,6 +1536,9 @@ class PlayState extends MusicBeatState {
 	}
 
 	override function openSubState(SubState:FlxSubState) {
+		if (videoCutscene != null)
+			videoCutscene.videoSprite.pause();
+
 		stagesFunc(function(stage:BaseStage) stage.openSubState(SubState));
 		if (paused) {
 			if (FlxG.sound.music != null) {
@@ -1548,6 +1558,9 @@ class PlayState extends MusicBeatState {
 	public var canResync:Bool = true;
 
 	override function closeSubState() {
+		if (videoCutscene != null)
+			videoCutscene.videoSprite.pause();
+
 		super.closeSubState();
 
 		stagesFunc(function(stage:BaseStage) stage.closeSubState());
@@ -1771,7 +1784,8 @@ class PlayState extends MusicBeatState {
 								if (cpuControlled
 									&& !daNote.blockHit
 									&& daNote.canBeHit
-									&& (daNote.isSustainNote || daNote.strumTime <= Conductor.songPosition))
+									&& ((daNote.isSustainNote && daNote.prevNote.wasGoodHit)
+										|| daNote.strumTime <= Conductor.songPosition))
 									goodNoteHit(daNote);
 							} else if (daNote.wasGoodHit && !daNote.hitByOpponent && !daNote.ignoreNote)
 								opponentNoteHit(daNote);
@@ -2492,7 +2506,14 @@ class PlayState extends MusicBeatState {
 		// tryna do MS based judgment due to popular demand
 		var daRating:Rating = Conductor.judgeNote(ratingsData, noteDiff / playbackRate);
 
-		totalNotesHit += daRating.ratingMod;
+		switch (ClientPrefs.data.accuracyType) {
+			case 'Note':
+				totalNotesHit += 1;
+			case 'Millisecond': // Much like Kade's "Complex" but less broken
+				totalNotesHit += (daRating.name == 'sick' ? 1 : ratingsData[0].hitWindow / (noteDiff / playbackRate));
+			default:
+				totalNotesHit += daRating.ratingMod;
+		}
 		note.ratingMod = daRating.ratingMod;
 		if (!note.ratingDisabled)
 			daRating.hits++;

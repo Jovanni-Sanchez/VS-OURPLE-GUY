@@ -15,6 +15,11 @@ class GameplaySettingsSubState extends BaseOptionsMenu {
 		var option:Option = new Option('Middlescroll', 'If checked, your notes get centered.', 'middleScroll', BOOL);
 		addOption(option);
 
+		var option:Option = new Option('Accuracy Type:',
+			"The way accuracy is calculated. \nNote = Depending on if a note is hit or not.\nJudgement = Depending on Judgement.\nMillisecond = Depending on milliseconds.",
+			'accuracyType', STRING, ['Note', 'Judgement', 'Millisecond']);
+		addOption(option);
+
 		var option:Option = new Option('Opponent Notes', 'If unchecked, opponent notes get hidden.', 'opponentStrums', BOOL);
 		addOption(option);
 

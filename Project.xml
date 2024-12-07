@@ -194,10 +194,10 @@
 
 	<!-- _________________________________ Custom _______________________________ -->
 
-	<assets path='projFiles/icons//iconOG.png' rename='icon.png' if="linux" />
+	<assets path='projFiles/icons/iconOG.png' rename='icon.png' if="linux" />
 
-	<icon path="projFiles/icons//icon16.png" size='16'/>
-	<icon path="projFiles/icons//icon32.png" size='32'/>
-	<icon path="projFiles/icons//icon64.png" size='64'/>
-	<icon path="projFiles/icons//iconOG.png" />
+	<icon path="projFiles/icons/icon16.png" size='16'/>
+	<icon path="projFiles/icons/icon32.png" size='32'/>
+	<icon path="projFiles/icons/icon64.png" size='64'/>
+	<icon path="projFiles/icons/iconOG.png" />
 </project>

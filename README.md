@@ -40,3 +40,6 @@ Refer to [Psych Engine's build instructions](https://github.com/ShadowMario/FNF-
 - [ADA-Funni](https://github.com/ADA-Funni) - Mouse wheel shortcut for sustains within the Chart Editor.
 - [inky03](https://github.com/inky03) - Vortex Editor Functionality, a Everything Waveform view, Editor sustains, and scripting touch-ups.
 - [Burgerballs](https://github.com/Burgerballs) - Accuracy Types, UI Accomodation for Mac, and other PRs.
+- [Tapa](https://steamcommunity.com/profiles/76561198804399316) - Made the banner used in this Markdown file.
+
+![](projFiles/welcome.png)

@@ -3007,8 +3007,9 @@ class PlayState extends MusicBeatState {
 		if (result != LuaUtils.Function_Stop && result != LuaUtils.Function_StopHScript && result != LuaUtils.Function_StopAll)
 			callOnHScript('opponentNoteHit', [note]);
 
-		if (!note.isSustainNote)
+		if (!note.isSustainNote) {
 			invalidateNote(note);
+		}
 	}
 
 	public function goodNoteHit(note:Note):Void {
@@ -3109,8 +3110,29 @@ class PlayState extends MusicBeatState {
 		var result:Dynamic = callOnLuas('goodNoteHit', [notes.members.indexOf(note), leData, leType, isSus]);
 		if (result != LuaUtils.Function_Stop && result != LuaUtils.Function_StopHScript && result != LuaUtils.Function_StopAll)
 			callOnHScript('goodNoteHit', [note]);
-		if (!note.isSustainNote)
+		if (!note.isSustainNote) {
 			invalidateNote(note);
+			if (note.rating == 'bad' || note.rating == 'shit') {
+				makeGhostNote(note);
+			}
+		}
+	}
+
+	function makeGhostNote(note:Note) {
+		var ghost = new Note(note.strumTime, note.noteData, null, note.isSustainNote);
+		ghost.noteType = 'MISSED_NOTE';
+		ghost.multAlpha = note.multAlpha * .5;
+		ghost.mustPress = note.mustPress;
+		ghost.ignoreNote = true;
+		ghost.blockHit = true;
+		notes.add(ghost);
+
+		ghost.rgbShader.r.saturation = .2;
+		ghost.rgbShader.g.saturation = .2;
+		ghost.rgbShader.b.saturation = .2;
+		ghost.rgbShader.r = ghost.rgbShader.r;
+		ghost.rgbShader.g = ghost.rgbShader.g;
+		ghost.rgbShader.b = ghost.rgbShader.b;
 	}
 
 	public function invalidateNote(note:Note):Void {

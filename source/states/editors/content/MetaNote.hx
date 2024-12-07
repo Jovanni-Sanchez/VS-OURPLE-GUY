@@ -173,7 +173,13 @@ class EditorSustain extends Note {
 		sustainTile.scale.y = sustainHeight;
 		sustainTile.updateHitbox();
 		sustainTile.alpha = this.alpha;
-		sustainTile.setPosition(this.x, this.y - sustainHeight);
+
+		if (PlayState.isPixelStage) {
+			sustainTile.setPosition(this.x, this.y - sustainHeight);
+		} else {
+			sustainTile.setPosition(this.x + 5, this.y - sustainHeight);
+		}
+
 		sustainTile.draw();
 
 		y += sustainHeight;

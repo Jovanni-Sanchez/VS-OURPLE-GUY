@@ -107,12 +107,12 @@
 		<assets path='mods' embed='false' type='template' unless="mac"/>
 		<assets path='mods' embed='false' if="mac"/>
 	</section>
-	<assets path='list.txt' rename='modsList.txt' />
+	<assets path='projFiles/setup/list.txt' rename='modsList.txt' />
 
 	<!-- OpenAL config -->
 	<section if="desktop">
-		<assets path="alsoft.txt" rename="plugins/alsoft.ini" type="text" if="windows"/>
-		<assets path="alsoft.txt" rename="plugins/alsoft.conf" type="text" unless="windows"/>
+		<assets path="projFiles/setup/alsoft.txt" rename="plugins/alsoft.ini" type="text" if="windows"/>
+		<assets path="projFiles/setup/alsoft.txt" rename="plugins/alsoft.conf" type="text" unless="windows"/>
 	</section>
 
 	<!-- _______________________________ Libraries ______________________________ -->

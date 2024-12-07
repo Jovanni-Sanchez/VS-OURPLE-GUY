@@ -291,6 +291,8 @@ class Note extends FlxSprite {
 
 			if (PlayState.isPixelStage)
 				offsetX += 30;
+			else
+				offsetX -= 1;
 
 			if (prevNote.isSustainNote) {
 				prevNote.animation.play(colArray[prevNote.noteData % colArray.length] + 'hold');
@@ -302,6 +304,8 @@ class Note extends FlxSprite {
 				if (PlayState.isPixelStage) {
 					prevNote.scale.y *= 1.19;
 					prevNote.scale.y *= (6 / height); // Auto adjust note size
+				} else {
+					prevNote.offsetX += 12;
 				}
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();

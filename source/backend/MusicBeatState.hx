@@ -134,18 +134,13 @@ class MusicBeatState extends FlxState {
 			FlxG.state.openSubState(new CustomFadeTransition(0.6, false));
 
 			CustomFadeTransition.finishCallback = onOutroComplete;
+
 			return;
 		}
 
-		onOutroComplete();
-	}
-
-	public static function resetState() {
-		if (FlxTransitionableState.skipNextTransIn)
-			FlxG.resetState();
-		else
-			startTransition();
 		FlxTransitionableState.skipNextTransIn = false;
+
+		onOutroComplete();
 	}
 
 	public static function getState():MusicBeatState {

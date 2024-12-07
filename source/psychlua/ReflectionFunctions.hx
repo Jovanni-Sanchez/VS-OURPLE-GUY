@@ -188,6 +188,8 @@ class ReflectionFunctions {
 			var parent:Dynamic = PlayState.instance;
 			var split:Array<String> = funcToRun.split('.');
 			var varParent:Dynamic = MusicBeatState.getVariables().get(split[0].trim());
+			if (!Std.isOfType(args, Array))
+				args = [];
 			if (varParent != null) {
 				split.shift();
 				funcToRun = split.join('.').trim();
@@ -199,11 +201,15 @@ class ReflectionFunctions {
 			}
 			return Reflect.callMethod(null, parent, parseInstances(args));
 		});
-		Lua_helper.add_callback(lua, "callMethodFromClass", function(className:String, funcToRun:String, ?args:Array<Dynamic> = null) {
+		Lua_helper.add_callback(lua, "callMethodFromClass", function(className:String, funcToRun:String, ?args:Array<Dynamic>) {
+			if (!Std.isOfType(args, Array))
+				args = [];
 			return callMethodFromObject(Type.resolveClass(className), funcToRun, parseInstances(args));
 		});
 
-		Lua_helper.add_callback(lua, "createInstance", function(variableToSave:String, className:String, ?args:Array<Dynamic> = null) {
+		Lua_helper.add_callback(lua, "createInstance", function(variableToSave:String, className:String, ?args:Array<Dynamic>) {
+			if (!Std.isOfType(args, Array))
+				args = [];
 			variableToSave = variableToSave.trim().replace('.', '');
 			if (MusicBeatState.getVariables().get(variableToSave) == null) {
 				if (args == null)
@@ -256,7 +262,7 @@ class ReflectionFunctions {
 		return newArray;
 	}
 
-	static function parseInstances(args:Array<Dynamic>) {
+	public static function parseInstances(arg:Dynamic):Dynamic {
 		if (Std.isOfType(arg, Array)) {
 			return parseInstanceArray(arg);
 		} else {

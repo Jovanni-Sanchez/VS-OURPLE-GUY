@@ -1020,7 +1020,6 @@ class PlayState extends MusicBeatState {
 
 				var introSprites:Array<String> = getCountdownSpriteNames(stageUI);
 
-				var introAlts:Array<String> = introAssets.get(stageUI);
 				var antialias:Bool = (ClientPrefs.data.antialiasing && !isPixelStage);
 				var tick:Countdown = THREE;
 
@@ -2439,7 +2438,7 @@ class PlayState extends MusicBeatState {
 					#if DISCORD_ALLOWED DiscordClient.resetClientID(); #end
 
 					canResync = false;
-					MusicBeatState.switchState(new StoryMenuState());
+					FlxG.switchState(new StoryMenuState());
 
 					// if ()
 					if (!ClientPrefs.getGameplaySetting('practice') && !ClientPrefs.getGameplaySetting('botplay')) {
@@ -2473,7 +2472,7 @@ class PlayState extends MusicBeatState {
 				#if DISCORD_ALLOWED DiscordClient.resetClientID(); #end
 
 				canResync = false;
-				MusicBeatState.switchState(new FreeplayState());
+				FlxG.switchState(new FreeplayState());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 				changedDifficulty = false;
 			}

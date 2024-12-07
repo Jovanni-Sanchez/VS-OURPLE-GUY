@@ -601,7 +601,6 @@ class FunkinLua {
 					var variables = MusicBeatState.getVariables();
 					variables.set(tag, FlxTween.color(penisExam, duration, curColor, newColor, {
 						ease: LuaUtils.getTweenEaseByString(ease),
-						ease: LuaUtils.getTweenEaseByString(ease),
 						onComplete: function(twn:FlxTween) {
 							variables.remove(tag);
 							if (game != null)

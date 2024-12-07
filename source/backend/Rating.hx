@@ -5,7 +5,8 @@ import backend.ClientPrefs;
 class Rating {
 	public var name:String = '';
 	public var image:String = '';
-	public var hitWindow:Null<Float> = 0.0; // ms	public var ratingMod:Float = 1;
+	public var hitWindow:Null<Float> = 0.0; // ms
+	public var ratingMod:Float = 1;
 	public var score:Int = 350;
 	public var noteSplash:Bool = true;
 	public var hits:Int = 0;

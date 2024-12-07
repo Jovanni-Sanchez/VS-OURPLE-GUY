@@ -200,11 +200,6 @@ class Note extends FlxSprite {
 					rgbShader.g = 0xFFFF0000;
 					rgbShader.b = 0xFF990022;
 
-					// splash data and colors
-					// noteSplashData.r = 0xFFFF0000;
-					// noteSplashData.g = 0xFF101010;
-					noteSplashData.texture = 'noteSplashes-electric';
-
 					// gameplay data
 					lowPriority = true;
 					missHealth = isSustainNote ? 0.25 : 0.1;
@@ -289,10 +284,11 @@ class Note extends FlxSprite {
 
 			offsetX -= width / 2;
 
-			if (PlayState.isPixelStage)
+			if (PlayState.isPixelStage) {
 				offsetX += 30;
-			else
+			} else {
 				offsetX -= 1;
+			}
 
 			if (prevNote.isSustainNote) {
 				prevNote.animation.play(colArray[prevNote.noteData % colArray.length] + 'hold');
@@ -397,6 +393,7 @@ class Note extends FlxSprite {
 				offsetX += _lastNoteOffX;
 				_lastNoteOffX = (width - 7) * (PlayState.daPixelZoom / 2);
 				offsetX -= _lastNoteOffX;
+				offsetX -= 9;
 			}
 		} else {
 			frames = Paths.getSparrowAtlas(skin);

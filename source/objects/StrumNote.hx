@@ -5,6 +5,8 @@ import shaders.RGBPalette;
 import shaders.RGBPalette.RGBShaderReference;
 
 class StrumNote extends FlxSprite {
+	public var animOffsets:Map<String, Array<Dynamic>>;
+
 	public var rgbShader:RGBShaderReference;
 	public var resetAnim:Float = 0;
 
@@ -30,6 +32,7 @@ class StrumNote extends FlxSprite {
 
 	public function new(x:Float, y:Float, leData:Int, player:Int) {
 		animation = new PsychAnimationController(this);
+		animOffsets = new Map<String, Array<Dynamic>>();
 
 		rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(leData));
 		rgbShader.enabled = false;
@@ -91,20 +94,32 @@ class StrumNote extends FlxSprite {
 			switch (Math.abs(noteData) % 4) {
 				case 0:
 					animation.add('static', [0]);
-					animation.add('pressed', [4, 8], 12, false);
-					animation.add('confirm', [12, 16], 12, false);
+					animation.add('pressed', [8, 12], 12, false);
+					animation.add('confirm', [8, 12], 8, false);
+					addOffset('static', 0, -6);
+					addOffset('pressed', 0, -6);
+					addOffset('confirm', 0, -6);
 				case 1:
 					animation.add('static', [1]);
-					animation.add('pressed', [5, 9], 12, false);
-					animation.add('confirm', [13, 17], 12, false);
+					animation.add('pressed', [9, 13], 12, false);
+					animation.add('confirm', [9, 13], 8, false);
+					addOffset('static', 0, -6);
+					addOffset('pressed', 0, -6);
+					addOffset('confirm', 0, -6);
 				case 2:
 					animation.add('static', [2]);
-					animation.add('pressed', [6, 10], 12, false);
-					animation.add('confirm', [14, 18], 12, false);
+					animation.add('pressed', [10, 14], 12, false);
+					animation.add('confirm', [10, 14], 8, false);
+					addOffset('static', 0, -6);
+					addOffset('pressed', 0, -6);
+					addOffset('confirm', 0, -6);
 				case 3:
 					animation.add('static', [3]);
-					animation.add('pressed', [7, 11], 12, false);
-					animation.add('confirm', [15, 19], 12, false);
+					animation.add('pressed', [11, 15], 12, false);
+					animation.add('confirm', [11, 15], 8, false);
+					addOffset('static', 0, -6);
+					addOffset('pressed', 0, -6);
+					addOffset('confirm', 0, -6);
 			}
 		} else {
 			frames = Paths.getSparrowAtlas(texture);
@@ -119,20 +134,28 @@ class StrumNote extends FlxSprite {
 			switch (Math.abs(noteData) % 4) {
 				case 0:
 					animation.addByPrefix('static', 'arrowLEFT');
-					animation.addByPrefix('pressed', 'left press', 24, false);
-					animation.addByPrefix('confirm', 'left confirm', 24, false);
+					animation.addByPrefix('pressed', 'left press', 30, false);
+					animation.addByPrefix('confirm', 'left confirm', 30, false);
+					addOffset('confirm', 2, 0, -1);
+					addOffset('pressed', 9, -3, -1);
 				case 1:
 					animation.addByPrefix('static', 'arrowDOWN');
-					animation.addByPrefix('pressed', 'down press', 24, false);
-					animation.addByPrefix('confirm', 'down confirm', 24, false);
+					animation.addByPrefix('pressed', 'down press', 30, false);
+					animation.addByPrefix('confirm', 'down confirm', 30, false);
+					addOffset('confirm', -3, -10);
+					addOffset('pressed', 3, -10);
 				case 2:
 					animation.addByPrefix('static', 'arrowUP');
-					animation.addByPrefix('pressed', 'up press', 24, false);
-					animation.addByPrefix('confirm', 'up confirm', 24, false);
+					animation.addByPrefix('pressed', 'up press', 30, false);
+					animation.addByPrefix('confirm', 'up confirm', 30, false);
+					addOffset('confirm', 2, 6);
+					addOffset('pressed', 1.5, 12.5);
 				case 3:
 					animation.addByPrefix('static', 'arrowRIGHT');
-					animation.addByPrefix('pressed', 'right press', 24, false);
-					animation.addByPrefix('confirm', 'right confirm', 24, false);
+					animation.addByPrefix('pressed', 'right press', 30, false);
+					animation.addByPrefix('confirm', 'right confirm', 30, false);
+					addOffset('confirm', -2, 0, 1);
+					addOffset('pressed', -7, 0, 1);
 			}
 		}
 		updateHitbox();
@@ -159,12 +182,27 @@ class StrumNote extends FlxSprite {
 		super.update(elapsed);
 	}
 
+	public function addOffset(name:String, x:Float = 0, y:Float = 0, angle:Float = 0) {
+		animOffsets[name] = [x, y, angle];
+	}
+
 	public function playAnim(anim:String, ?force:Bool = false) {
 		animation.play(anim, force);
+		var daOffset = animOffsets.get(anim);
+
 		if (animation.curAnim != null) {
-			centerOffsets();
-			centerOrigin();
+			if (animOffsets.exists(anim)) {
+				centerOffsets();
+				offset.set(offset.x + daOffset[0], offset.y + daOffset[1]);
+				angle = daOffset[2];
+			} else {
+				centerOffsets();
+			}
+			if (!PlayState.isPixelStage) {
+				centerOrigin();
+			}
 		}
+
 		if (useRGBShader) {
 			if (PlayState.isPixelStage) {
 				rgbShader.enabled = (animation.curAnim != null && animation.curAnim.name != 'static');

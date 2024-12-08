@@ -42,4 +42,4 @@ Refer to [Psych Engine's build instructions](https://github.com/ShadowMario/FNF-
 - [Burgerballs](https://github.com/Burgerballs) - Accuracy Types, UI Accomodation for Mac, and other PRs.
 - [Tapa](https://steamcommunity.com/profiles/76561198804399316) - Made the banner used in this Markdown file.
 
-![](projFiles/welcome.png)
+[![](projFiles/welcome.png)](https://ourpleguy.neocities.org/)

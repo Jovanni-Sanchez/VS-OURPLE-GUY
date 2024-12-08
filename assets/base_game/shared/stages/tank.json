@@ -1,7 +1,7 @@
 {
 	"directory": "week7",
 	"defaultZoom": 0.9,
-	"stageUI": "",
+	"stageHUD": "",
 	"boyfriend": [
 		810,
 		100

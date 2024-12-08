@@ -615,8 +615,8 @@ class StageEditorState extends MusicBeatState implements PsychUIEventHandler.Psy
 
 		objY += 50;
 		tab_group.add(new FlxText(objX, objY - 18, 100, 'UI Style:'));
-		uiInputText = new PsychUIInputText(objX, objY, 100, stageJson.stageUI != null ? stageJson.stageUI : '', 8);
-		uiInputText.onChange = function(old:String, cur:String) stageJson.stageUI = uiInputText.text;
+		uiInputText = new PsychUIInputText(objX, objY, 100, stageJson.stageHUD != null ? stageJson.stageHUD : '', 8);
+		uiInputText.onChange = function(old:String, cur:String) stageJson.stageHUD = uiInputText.text;
 
 		objY += 30;
 		hideGirlfriendCheckbox = new PsychUICheckBox(objX, objY, 'Hide Girlfriend?', 100);
@@ -1109,7 +1109,7 @@ class StageEditorState extends MusicBeatState implements PsychUIEventHandler.Psy
 
 	function updateStageDataUI() {
 		// input texts
-		uiInputText.text = (stageJson.stageUI != null ? stageJson.stageUI : '');
+		uiInputText.text = (stageJson.stageHUD != null ? stageJson.stageHUD : '');
 		// checkboxes
 		hideGirlfriendCheckbox.checked = (stageJson.hide_girlfriend);
 		gf.visible = !hideGirlfriendCheckbox.checked;

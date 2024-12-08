@@ -106,25 +106,25 @@ class PlayState extends MusicBeatState {
 	public var gfGroup:FlxSpriteGroup;
 
 	public static var curStage:String = '';
-	public static var stageUI(default, set):String = "normal";
-	public static var uiPrefix:String = "";
-	public static var uiPostfix:String = "";
+	public static var stageHUD(default, set):String = "normal";
+	public static var hudPrefix:String = "";
+	public static var hudPostfix:String = "";
 	public static var isPixelStage(get, never):Bool;
 
 	@:noCompletion
-	static function set_stageUI(value:String):String {
-		uiPrefix = uiPostfix = "";
+	static function set_stageHUD(value:String):String {
+		hudPrefix = hudPostfix = "";
 		if (value != "normal") {
-			uiPrefix = value.split("-pixel")[0].trim();
+			hudPrefix = value.split("-pixel")[0].trim();
 			if (value == "pixel" || value.endsWith("-pixel"))
-				uiPostfix = "-pixel";
+				hudPostfix = "-pixel";
 		}
-		return stageUI = value;
+		return stageHUD = value;
 	}
 
 	@:noCompletion
 	static function get_isPixelStage():Bool
-		return stageUI == "pixel" || stageUI.endsWith("-pixel");
+		return stageHUD == "pixel" || stageHUD.endsWith("-pixel");
 
 	public static var SONG:SwagSong = null;
 	public static var isStoryMode:Bool = false;
@@ -336,11 +336,11 @@ class PlayState extends MusicBeatState {
 		var stageData:StageFile = StageData.getStageFile(curStage);
 		defaultCamZoom = stageData.defaultZoom;
 
-		stageUI = "normal";
-		if (stageData.stageUI != null && stageData.stageUI.trim().length > 0)
-			stageUI = stageData.stageUI;
+		stageHUD = "normal";
+		if (stageData.stageHUD != null && stageData.stageHUD.trim().length > 0)
+			stageHUD = stageData.stageHUD;
 		else if (stageData.isPixelStage == true) // Backward compatibility
-			stageUI = "pixel";
+			stageHUD = "pixel";
 
 		BF_X = stageData.boyfriend[0];
 		BF_Y = stageData.boyfriend[1];
@@ -366,7 +366,7 @@ class PlayState extends MusicBeatState {
 
 		introSoundNames = stageData.introSounds;
 		if (introSoundNames == null || introSoundNames.length < 4)
-			introSoundNames = getDefaultCountdownSounds(stageUI); // in case stageData doesn't have any sounds
+			introSoundNames = getDefaultCountdownSounds(stageHUD); // in case stageData doesn't have any sounds
 		for (sndName in introSoundNames) {
 			if (sndName == null)
 				continue;
@@ -479,11 +479,11 @@ class PlayState extends MusicBeatState {
 		startCharacterScripts(boyfriend.curCharacter);
 		#end
 
-		uiGroup = new FlxSpriteGroup();
+		hudGroup = new FlxSpriteGroup();
 		comboGroup = new FlxSpriteGroup();
 		noteGroup = new FlxTypedGroup<FlxBasic>();
 		add(comboGroup);
-		add(uiGroup);
+		add(hudGroup);
 		add(noteGroup);
 
 		Conductor.songPosition = -Conductor.crochet * 5 + Conductor.offset;
@@ -499,13 +499,15 @@ class PlayState extends MusicBeatState {
 		if (ClientPrefs.data.timeBarType == 'Song Name')
 			timeTxt.text = SONG.song;
 
-		timeBar = new Bar(0, timeTxt.y + (timeTxt.height / 4), 'timeBar', function() return songPercent, 0, 1);
+		timeBar = new Bar(0, timeTxt.y + (timeTxt.height / 4), 'blank', function() return songPercent, 0, 1);
 		timeBar.scrollFactor.set();
 		timeBar.screenCenter(X);
 		timeBar.alpha = 0;
 		timeBar.visible = showTime;
-		uiGroup.add(timeBar);
-		uiGroup.add(timeTxt);
+		timeBar.barWidth = 403;
+		timeBar.barHeight = 20;
+		hudGroup.add(timeBar);
+		hudGroup.add(timeTxt);
 
 		noteGroup.add(strumLineNotes);
 
@@ -541,20 +543,27 @@ class PlayState extends MusicBeatState {
 		healthBar.scrollFactor.set();
 		healthBar.visible = !ClientPrefs.data.hideHud;
 		healthBar.alpha = ClientPrefs.data.healthBarAlpha;
+		healthBar.barWidth = 572;
+		healthBar.barHeight = 22;
 		reloadHealthBarColors();
-		uiGroup.add(healthBar);
+		hudGroup.add(healthBar);
 
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
 		iconP1.y = healthBar.y - 75;
 		iconP1.visible = !ClientPrefs.data.hideHud;
 		iconP1.alpha = ClientPrefs.data.healthBarAlpha;
-		uiGroup.add(iconP1);
+		hudGroup.add(iconP1);
 
 		iconP2 = new HealthIcon(dad.healthIcon, false);
 		iconP2.y = healthBar.y - 75;
 		iconP2.visible = !ClientPrefs.data.hideHud;
 		iconP2.alpha = ClientPrefs.data.healthBarAlpha;
-		uiGroup.add(iconP2);
+		hudGroup.add(iconP2);
+
+		iconP1.scale.set(1.2, 1.2);
+		iconP2.scale.set(1.2, 1.2);
+		iconP1.updateHitbox();
+		iconP2.updateHitbox();
 
 		scoreTxt = new FlxText(0, healthBar.y + 40, FlxG.width, "", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -562,18 +571,18 @@ class PlayState extends MusicBeatState {
 		scoreTxt.borderSize = 1.25;
 		scoreTxt.visible = !ClientPrefs.data.hideHud;
 		updateScore(false);
-		uiGroup.add(scoreTxt);
+		hudGroup.add(scoreTxt);
 
 		botplayTxt = new FlxText(400, healthBar.y - 90, FlxG.width - 800, Language.getPhrase("Botplay").toUpperCase(), 32);
 		botplayTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		botplayTxt.scrollFactor.set();
 		botplayTxt.borderSize = 1.25;
 		botplayTxt.visible = cpuControlled;
-		uiGroup.add(botplayTxt);
+		hudGroup.add(botplayTxt);
 		if (ClientPrefs.data.downScroll)
 			botplayTxt.y = healthBar.y + 70;
 
-		uiGroup.cameras = [camHUD];
+		hudGroup.cameras = [camHUD];
 		noteGroup.cameras = [camHUD];
 		comboGroup.cameras = [camHUD];
 
@@ -936,39 +945,39 @@ class PlayState extends MusicBeatState {
 	public static var startOnTime:Float = 0;
 
 	function cacheCountdown() {
-		var introSprites:Array<String> = getCountdownSpriteNames(stageUI);
+		var introSprites:Array<String> = getCountdownSpriteNames(stageHUD);
 		for (asset in introSprites)
 			Paths.image(asset);
 		for (sound in introSoundNames)
 			Paths.sound(sound + introSoundsSuffix, true, false); // this should cover backwards compat
 	}
 
-	function getCountdownSpriteNames(?givenUI:Null<String>):Array<String> {
-		if (givenUI == null)
-			givenUI = stageUI;
-		return switch (givenUI) {
+	function getCountdownSpriteNames(?givenHUD:Null<String>):Array<String> {
+		if (givenHUD == null)
+			givenHUD = stageHUD;
+		return switch (givenHUD) {
 			case "pixel": [
-					'${givenUI}UI/ready-pixel',
-					'${givenUI}UI/ready-pixel',
-					'${givenUI}UI/set-pixel',
-					'${givenUI}UI/date-pixel'
+					'${givenHUD}HUD/ready-pixel',
+					'${givenHUD}HUD/ready-pixel',
+					'${givenHUD}HUD/set-pixel',
+					'${givenHUD}HUD/date-pixel'
 				];
-			case "normal": ["prepare", "ready", "set", "go"];
+			case "normal": ["onyourmarks", "ready", "set", "go"];
 			default: [
-					'${givenUI}UI/prepare',
-					'${givenUI}UI/ready',
-					'${givenUI}UI/set',
-					'${givenUI}UI/go'
+					'${givenHUD}HUD/prepare',
+					'${givenHUD}HUD/ready',
+					'${givenHUD}HUD/set',
+					'${givenHUD}HUD/go'
 				];
 		};
 	}
 
-	function getDefaultCountdownSounds(?givenUI:Null<String>):Array<String> {
+	function getDefaultCountdownSounds(?givenHUD:Null<String>):Array<String> {
 		// function to prevent null strings for countdown sounds, if you need to hardcode anything
 		// this is your place to do it
-		if (givenUI == null)
-			givenUI = stageUI;
-		return switch (givenUI) { // add custom ones here if you need to hardcode or something
+		if (givenHUD == null)
+			givenHUD = stageHUD;
+		return switch (givenHUD) { // add custom ones here if you need to hardcode or something
 			default: ["intro3", "intro2", "intro1", "introGo"];
 		}
 	}
@@ -1018,7 +1027,7 @@ class PlayState extends MusicBeatState {
 			startTimer = new FlxTimer().start(Conductor.crochet / 1000 / playbackRate, function(tmr:FlxTimer) {
 				characterBopper(tmr.loopsLeft);
 
-				var introSprites:Array<String> = getCountdownSpriteNames(stageUI);
+				var introSprites:Array<String> = getCountdownSpriteNames(stageHUD);
 
 				var antialias:Bool = (ClientPrefs.data.antialiasing && !isPixelStage);
 				var tick:Countdown = THREE;
@@ -1874,9 +1883,8 @@ class PlayState extends MusicBeatState {
 	}
 
 	public dynamic function updateIconsPosition() {
-		var iconOffset:Int = 26;
-		iconP1.x = healthBar.barCenter + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-		iconP2.x = healthBar.barCenter - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+		iconP1.x = 855;
+		iconP2.x = 270;
 	}
 
 	var iconsAnimations:Bool = true;
@@ -2495,26 +2503,24 @@ class PlayState extends MusicBeatState {
 	public var totalPlayed:Int = 0;
 	public var totalNotesHit:Float = 0.0;
 
-	public var showCombo:Bool = false;
+	public var showCombo:Bool = true;
 	public var showComboNum:Bool = true;
 	public var showRating:Bool = true;
 
 	// Stores Ratings and Combo Sprites in a group
 	public var comboGroup:FlxSpriteGroup;
 	// Stores HUD Objects in a Group
-	public var uiGroup:FlxSpriteGroup;
+	public var hudGroup:FlxSpriteGroup;
 	// Stores Note Objects in a Group
 	public var noteGroup:FlxTypedGroup<FlxBasic>;
 
 	private function cachePopUpScore() {
-		var uiFolder:String = "";
-		if (stageUI != "normal")
-			uiFolder = uiPrefix + "UI/";
+		var hudFolder:String = "";
+		if (stageHUD != "normal")
+			hudFolder = hudFolder + "UI/";
 
 		for (rating in ratingsData)
-			Paths.image(uiFolder + rating.image + uiPostfix);
-		for (i in 0...10)
-			Paths.image(uiFolder + 'num' + i + uiPostfix);
+			Paths.image(hudFolder + rating.image + hudFolder);
 	}
 
 	private function popUpScore(note:Note = null):Void {
@@ -2564,36 +2570,38 @@ class PlayState extends MusicBeatState {
 			}
 		}
 
-		var uiFolder:String = "";
+		var hudFolder:String = "";
 		var antialias:Bool = ClientPrefs.data.antialiasing;
-		if (stageUI != "normal") {
-			uiFolder = uiPrefix + "UI/";
+		if (stageHUD != "normal") {
+			hudFolder = hudPrefix + "UI/";
 			antialias = !isPixelStage;
 		}
 
-		rating.loadGraphic(Paths.image(uiFolder + daRating.image + uiPostfix));
-		rating.screenCenter();
-		rating.x = placement - 40;
-		rating.y -= 60;
-		rating.acceleration.y = 550 * playbackRate * playbackRate;
-		rating.velocity.y -= FlxG.random.int(140, 175) * playbackRate;
-		rating.velocity.x -= FlxG.random.int(0, 10) * playbackRate;
+		rating.loadGraphic(Paths.image(hudFolder + daRating.image + hudPostfix));
+		rating.setPosition(iconP1.getGraphicMidpoint().x + 75, iconP1.getGraphicMidpoint().y - 50);
+		rating.angularVelocity = FlxG.random.int(-20, 20) * playbackRate;
+		rating.velocity.y -= FlxG.random.int(140, 200) * playbackRate;
+		rating.velocity.x -= FlxG.random.int(0, 20) * playbackRate;
 		rating.visible = (!ClientPrefs.data.hideHud && showRating);
+		rating.acceleration.y = 550 * playbackRate * playbackRate;
 		rating.x += ClientPrefs.data.comboOffset[0];
 		rating.y -= ClientPrefs.data.comboOffset[1];
+		rating.angle = FlxG.random.int(-10, 10);
 		rating.antialiasing = antialias;
+		rating.scale.set(0.85, 0.85);
 
-		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(uiFolder + 'combo' + uiPostfix));
-		comboSpr.screenCenter();
-		comboSpr.x = placement;
+		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(hudFolder + 'combo' + hudPostfix));
+		comboSpr.setPosition(iconP2.getGraphicMidpoint().x - 75, iconP2.getGraphicMidpoint().y - 50);
 		comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
-		comboSpr.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
+		comboSpr.angularVelocity = FlxG.random.int(-20, 20) * playbackRate;
+		comboSpr.velocity.y -= FlxG.random.int(140, 240) * playbackRate;
+		comboSpr.velocity.x -= FlxG.random.int(0, 25) * playbackRate;
 		comboSpr.visible = (!ClientPrefs.data.hideHud && showCombo);
 		comboSpr.x += ClientPrefs.data.comboOffset[0];
 		comboSpr.y -= ClientPrefs.data.comboOffset[1];
+		comboSpr.angle = FlxG.random.int(-10, 10);
 		comboSpr.antialiasing = antialias;
-		comboSpr.y += 60;
-		comboSpr.velocity.x += FlxG.random.int(1, 10) * playbackRate;
+		comboSpr.scale.set(0.85, 0.85);
 		comboGroup.add(rating);
 
 		if (!PlayState.isPixelStage) {
@@ -2609,43 +2617,10 @@ class PlayState extends MusicBeatState {
 
 		var daLoop:Int = 0;
 		var xThing:Float = 0;
-		if (showCombo)
+		if (showCombo && (combo % 10) == 0) {
 			comboGroup.add(comboSpr);
-
-		var separatedScore:String = Std.string(combo).lpad('0', 3);
-		for (i in 0...separatedScore.length) {
-			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(uiFolder + 'num' + Std.parseInt(separatedScore.charAt(i)) + uiPostfix));
-			numScore.screenCenter();
-			numScore.x = placement + (43 * daLoop) - 90 + ClientPrefs.data.comboOffset[2];
-			numScore.y += 80 - ClientPrefs.data.comboOffset[3];
-
-			if (!PlayState.isPixelStage)
-				numScore.setGraphicSize(Std.int(numScore.width * 0.5));
-			else
-				numScore.setGraphicSize(Std.int(numScore.width * daPixelZoom));
-			numScore.updateHitbox();
-
-			numScore.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
-			numScore.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
-			numScore.velocity.x = FlxG.random.float(-5, 5) * playbackRate;
-			numScore.visible = !ClientPrefs.data.hideHud;
-			numScore.antialiasing = antialias;
-
-			// if (combo >= 10 || combo == 0)
-			if (showComboNum)
-				comboGroup.add(numScore);
-
-			FlxTween.tween(numScore, {alpha: 0}, 0.2 / playbackRate, {
-				onComplete: function(tween:FlxTween) {
-					numScore.destroy();
-				},
-				startDelay: Conductor.crochet * 0.002 / playbackRate
-			});
-
-			daLoop++;
-			if (numScore.x > xThing)
-				xThing = numScore.x;
 		}
+
 		comboSpr.x = xThing + 50;
 		FlxTween.tween(rating, {alpha: 0}, 0.2 / playbackRate, {
 			startDelay: Conductor.crochet * 0.001 / playbackRate

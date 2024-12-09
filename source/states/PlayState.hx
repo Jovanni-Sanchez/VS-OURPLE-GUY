@@ -499,7 +499,7 @@ class PlayState extends MusicBeatState {
 		if (ClientPrefs.data.timeBarType == 'Song Name')
 			timeTxt.text = SONG.song;
 
-		timeBar = new Bar(0, timeTxt.y + (timeTxt.height / 4), 'blank', function() return songPercent, 0, 1);
+		timeBar = new Bar(0, timeTxt.y + (timeTxt.height / 4), 'timebar', function() return songPercent, 0, 1);
 		timeBar.scrollFactor.set();
 		timeBar.screenCenter(X);
 		timeBar.alpha = 0;
@@ -1272,6 +1272,7 @@ class PlayState extends MusicBeatState {
 		// Song duration in a float, useful for the time left feature
 		songLength = FlxG.sound.music.length;
 		FlxTween.tween(timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
+		FlxTween.tween(timeBarOverlay, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 		FlxTween.tween(timeTxt, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 
 		#if DISCORD_ALLOWED
